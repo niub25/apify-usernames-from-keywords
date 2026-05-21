@@ -1,0 +1,89 @@
+{
+    "title": "Instagram Username Extractor — Keyword Scraper (Phase 1b)",
+    "description": "Discovers Instagram usernames via keyword search. Treats seed keywords as seeds, auto-discovers related hashtags to expand scope, then optionally paginates hashtag feeds for deeper coverage. Saves state so it survives server migrations.",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "keywords": {
+            "title": "Seed keywords",
+            "type": "array",
+            "description": "Starting search terms. Actor auto-discovers related hashtags and searches them too. Use natural phrases (e.g. 'running coach', 'marathon runner') — not hashtag format.",
+            "editor": "stringList",
+            "default": [
+                "running coach",
+                "marathon runner",
+                "trail running",
+                "ultramarathon",
+                "running tips",
+                "half marathon training",
+                "road running"
+            ],
+            "prefill": [
+                "running coach",
+                "marathon runner",
+                "trail running",
+                "ultramarathon",
+                "running tips",
+                "half marathon training",
+                "road running"
+            ]
+        },
+        "maxKeywords": {
+            "title": "Max total keywords to search (Phase A)",
+            "type": "integer",
+            "description": "Total keywords to search across both seed keywords and auto-discovered hashtag names. Each keyword search returns ~10–30 usernames.",
+            "minimum": 5,
+            "maximum": 2000,
+            "default": 100,
+            "prefill": 100
+        },
+        "expandViaHashtags": {
+            "title": "Expand via hashtag feeds (Phase B)",
+            "type": "boolean",
+            "description": "After keyword search, also paginate the hashtag feeds discovered during search. This significantly increases username coverage (same as the hashtag scraper).",
+            "default": true,
+            "prefill": true
+        },
+        "maxHashtags": {
+            "title": "Max hashtag feeds to paginate (Phase B)",
+            "type": "integer",
+            "description": "Only applies when 'Expand via hashtag feeds' is enabled. Each hashtag feed gives ~200–1200 usernames depending on pages.",
+            "minimum": 1,
+            "maximum": 1000,
+            "default": 50,
+            "prefill": 50
+        },
+        "maxPagesPerHashtag": {
+            "title": "Pages per hashtag (Phase B)",
+            "type": "integer",
+            "description": "Each page = ~12–24 usernames. Default 10 pages ≈ 120–240 usernames per hashtag.",
+            "minimum": 1,
+            "maximum": 500,
+            "default": 10,
+            "prefill": 10
+        },
+        "sessionId": {
+            "title": "Instagram Session ID",
+            "type": "string",
+            "description": "Your Instagram sessionid cookie. Required — without it Instagram blocks all requests.\n\nHow to get it:\n1. Log in to Instagram in Chrome\n2. Open DevTools → Application → Cookies → https://www.instagram.com\n3. Copy the value of the 'sessionid' cookie\n\nOr run in the Chrome console:\ndocument.cookie.split(';').find(c=>c.trim().startsWith('sessionid')).split('=')[1]",
+            "editor": "textfield",
+            "isSecret": true
+        },
+        "csrfToken": {
+            "title": "Instagram CSRF Token",
+            "type": "string",
+            "description": "Your Instagram csrftoken cookie. Strongly recommended alongside sessionId.\n\nChrome console:\ndocument.cookie.split(';').find(c=>c.trim().startsWith('csrftoken')).split('=')[1]",
+            "editor": "textfield",
+            "isSecret": true
+        },
+        "proxyConfiguration": {
+            "title": "Proxy configuration",
+            "type": "object",
+            "editor": "proxy",
+            "description": "Residential proxies are strongly recommended for Instagram. Without them expect heavy 429 / 401 rate limiting.",
+            "default": { "useApifyProxy": true, "apifyProxyGroups": ["RESIDENTIAL"] },
+            "prefill": { "useApifyProxy": true, "apifyProxyGroups": ["RESIDENTIAL"] }
+        }
+    },
+    "required": ["sessionId"]
+}
